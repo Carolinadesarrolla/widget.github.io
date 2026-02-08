@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edad</title>
+    <style>
+        body {
+            background-color: transparent;
+            font-family: monospace;
+            /* Simple font to ensure width consistency mostly */
+            margin: 0;
+            padding: 0;
+            /* No centering, no extra styling requested */
+        }
+    </style>
+</head>
+
+<body>
+    <div id="age-display"></div>
+
+    <script>
+        const birthDate = new Date('2007-01-12T00:00:00');
+
+        function updateAge() {
+            const now = new Date();
+
+            // Calculate base year difference
+            let years = now.getFullYear() - birthDate.getFullYear();
+
+            // Create date object for the birthday in the current year
+            // Note: We use the same month/day as birthDate
+            let lastBirthday = new Date(birthDate);
+            lastBirthday.setFullYear(now.getFullYear());
+
+            // Adjust if we haven't reached the birthday yet this year
+            if (now < lastBirthday) {
+                years--;
+                lastBirthday.setFullYear(now.getFullYear() - 1);
+            }
+
+            // Determine next birthday to calculate the length of the current 'age year'
+            let nextBirthday = new Date(lastBirthday);
+            nextBirthday.setFullYear(lastBirthday.getFullYear() + 1);
+
+            // Calculate fraction
+            const yearDuration = nextBirthday - lastBirthday;
+            const timeSinceLastBirthday = now - lastBirthday;
+
+            const fraction = timeSinceLastBirthday / yearDuration;
+            const exactAge = years + fraction;
+
+            // Format to 8 decimal places with comma
+            let formattedAge = exactAge.toFixed(8).replace('.', ',');
+
+            document.getElementById('age-display').innerText = formattedAge;
+
+            requestAnimationFrame(updateAge);
+        }
+
+        updateAge();
+    </script>
+</body>
+
+</html>
