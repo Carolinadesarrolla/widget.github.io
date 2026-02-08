@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saludo</title>
+    <link rel="stylesheet" href="/src/styles/main.css">
+    <style>
+        body {
+            background-color: transparent;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        #greeting {
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="greeting"></div>
+
+    <script>
+        // Define time slots and their greetings (35 total variants)
+        // 7 slots: earlyMorning, morning, midMorning, noon, afternoon, evening, night
+        const greetings = {
+            earlyMorning: [ // 05:00 - 08:00
+                "¡A madrugar!",
+                "Es muy temprano...",
+                "¡Buenos días madrugadores!",
+                "El sol está saliendo",
+                "¡A por el día!",
+                "Arrancando motores",
+                "Otro día más, vamos",
+                "Café en mano ☕",
+                "Despertando poco a poco",
+                "Empieza la aventura",
+                "El día apenas despierta",
+                "Modo zombie activado",
+                "Aún con sueño, pero vamos",
+                "Silencio matinal",
+                "Primeros rayos de sol",
+                "Respira, empieza el día",
+                "Muy temprano para pensar",
+                "Ojos abiertos… más o menos"
+            ],
+            morning: [ // 08:00 - 11:00
+                "¡Buenos días!",
+                "¡Que tengas un buen día!",
+                "Hola, ¿qué tal?",
+                "¡Feliz mañana!",
+                "¡A trabajar con energía!",
+                "Vamos con la mañana",
+                "Buen rollo para hoy",
+                "A tope desde temprano",
+                "Que todo fluya",
+                "Día en marcha",
+                "Mañana productiva",
+                "Empezamos fuerte",
+                "Todo bajo control",
+                "Buen comienzo",
+                "Ritmo constante",
+                "A darlo todo",
+                "Mentalidad positiva",
+                "Seguimos adelante"
+            ],
+            midMorning: [ // 11:00 - 13:00
+                "¡Ya falta poco para comer!",
+                "Sigamos con el día",
+                "¡Ánimo!",
+                "Media mañana ya...",
+                "¿Un café?",
+                "Último empujón",
+                "Seguimos sumando",
+                "Hora de estirar las piernas",
+                "Esto va bien",
+                "A no dormirse",
+                "Recta final de la mañana",
+                "Vamos bien de tiempo",
+                "Mantén el ritmo",
+                "Pequeña pausa mental",
+                "Café número dos",
+                "Seguimos enfocados",
+                "Todo sigue rodando"
+            ],
+            noon: [ // 13:00 - 15:00
+                "¡Hora de comer!",
+                "¡Buen provecho!",
+                "Mitad del día",
+                "Descansa un poco",
+                "¡Buenas tardes!",
+                "Pausa merecida",
+                "Recarga energías",
+                "Momento de desconectar",
+                "Comida y calma",
+                "Que aproveche",
+                "Tiempo para parar",
+                "Respira y disfruta",
+                "Hora sagrada",
+                "Un respiro al mediodía",
+                "Energía para la tarde",
+                "Momento de resetear"
+            ],
+            afternoon: [ // 15:00 - 18:00
+                "¡Buenas tardes!",
+                "Sigue así",
+                "Aprovecha la tarde",
+                "¡Hola!",
+                "Que vaya bien la tarde",
+                "Volvemos al lío",
+                "Tarde productiva",
+                "Paso a paso",
+                "Vamos cerrando cosas",
+                "Con calma pero sin pausa",
+                "Modo tarde activado",
+                "Seguimos avanzando",
+                "Ritmo suave",
+                "Tarde tranquila",
+                "Un último esfuerzo",
+                "Todo va encajando"
+            ],
+            evening: [ // 18:00 - 21:00
+                "¡Ya casi terminamos!",
+                "Buenas noches...",
+                "¡Relájate!",
+                "Cae la tarde",
+                "Disfruta lo que queda de día",
+                "Modo tranquilo",
+                "Desconectando poco a poco",
+                "El día afloja",
+                "Hora de bajar revoluciones",
+                "Plan de tarde-noche",
+                "Atardecer en marcha",
+                "Tiempo para mí",
+                "Se acaba la jornada",
+                "Luz más suave",
+                "Momento de calma",
+                "El día se despide"
+            ],
+            night: [ // 21:00 - 05:00
+                "¡Buenas noches!",
+                "A descansar",
+                "Dulces sueños",
+                "¡Hasta mañana!",
+                "Silencio...",
+                "Hora de dormir",
+                "Que descanses",
+                "Apaga y vámonos",
+                "Mañana será otro día",
+                "Buenas vibras nocturnas",
+                "Modo noche activado",
+                "Todo en calma",
+                "Luces fuera",
+                "Descanso merecido",
+                "La noche manda",
+                "Tiempo de recargar"
+            ]
+        };
+
+
+        let currentSlot = '';
+
+        function getTimeSlot(hour) {
+            if (hour >= 5 && hour < 8) return 'earlyMorning';
+            if (hour >= 8 && hour < 11) return 'morning';
+            if (hour >= 11 && hour < 13) return 'midMorning';
+            if (hour >= 13 && hour < 15) return 'noon';
+            if (hour >= 15 && hour < 18) return 'afternoon';
+            if (hour >= 18 && hour < 21) return 'evening';
+            return 'night'; // 21:00 - 05:00
+        }
+
+        function updateGreeting() {
+            const now = new Date();
+            const hour = now.getHours();
+            const newSlot = getTimeSlot(hour);
+
+            // Only change greeting if the slot has changed
+            // Or if it's the first run (currentSlot is empty)
+            if (newSlot !== currentSlot) {
+                currentSlot = newSlot;
+                const variants = greetings[currentSlot];
+                // Pick a random variant
+                const randomGreeting = variants[Math.floor(Math.random() * variants.length)];
+                document.getElementById('greeting').innerText = randomGreeting;
+            }
+
+            // Check again in a minute to avoid excessive CPU usage, 
+            // since we don't need second-precision updates for hour blocks.
+            setTimeout(updateGreeting, 60000);
+        }
+
+        updateGreeting();
+    </script>
+</body>
+
+</html>

@@ -5,20 +5,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edad</title>
+    <link rel="stylesheet" href="/src/styles/main.css">
     <style>
         body {
             background-color: transparent;
-            font-family: monospace;
             /* Simple font to ensure width consistency mostly */
             margin: 0;
             padding: 0;
-            /* No centering, no extra styling requested */
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .age-container {
+            position: relative;
+            padding: 0.5rem 1rem;
+            /* No outer border as requested */
+            /* border: 2px solid rgba(0, 0, 0, 0.1); */
+            background-clip: padding-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            /* Slightly thicker to show border */
+            background-color: rgba(255, 255, 255);
+            /* Track background */
+            border-radius: 999px;
+            /* Rounded pill shape */
+            margin-top: 8px;
+            /* Space between text and bar */
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255);
+            /* Border for the bar itself */
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary-color, #646cff);
+            width: 0%;
+            /* transition: width 0.1s linear; -> Removed transition for smoother realtime updates if frequent, 
+               but kept for smooth 1s updates. Since it's realtime, let's keep it direct or very fast. */
+            border-radius: 999px;
+        }
+
+        .edad-text-wrapper {
+            /* Use tabular-nums to prevent jitter */
+            font-variant-numeric: tabular-nums;
+            /* Ensure fixed width tailored to the approximate size of the text */
+            min-width: 220px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .edad {
+            font-weight: bold;
+        }
+
+        .percentage {
+            font-size: 0.9rem;
+            color: #c1c1c1;
+            margin-top: 4px;
+            font-variant-numeric: tabular-nums;
         }
     </style>
 </head>
 
 <body>
-    <div id="age-display"></div>
+    <div class="age-container">
+        <div class="edad-text-wrapper">
+            <span class="edad" id="age-display"></span><span class="edad">&nbsp;años</span>
+        </div>
+        <div class="percentage" id="percentage-display"></div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+    </div>
 
     <script>
         const birthDate = new Date('2007-01-12T00:00:00');
@@ -51,10 +120,15 @@
             const fraction = timeSinceLastBirthday / yearDuration;
             const exactAge = years + fraction;
 
-            // Format to 8 decimal places with comma
-            let formattedAge = exactAge.toFixed(8).replace('.', ',');
+            // Format to 7 decimal places with comma
+            let formattedAge = exactAge.toFixed(7).replace('.', ',');
 
             document.getElementById('age-display').innerText = formattedAge;
+
+            // Update progress bar and percentage text
+            const percentage = fraction * 100;
+            document.getElementById('progress-bar').style.width = percentage + '%';
+            document.getElementById('percentage-display').innerText = percentage.toFixed(2).replace('.', ',') + '%';
 
             requestAnimationFrame(updateAge);
         }
