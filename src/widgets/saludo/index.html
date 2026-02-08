@@ -5,18 +5,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Saludo</title>
-    <link rel="stylesheet" href="/src/styles/main.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap');
+
+        :root {
+            --font-family: 'Kalam', cursive, system-ui, sans-serif;
+            --primary-color: #ff6464;
+            --bg-color: #ffffff;
+            --text-color: #213547;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.5;
+            font-weight: 400;
+        }
+
+        /* Widget specific override */
         body {
             background-color: transparent;
             margin: 0;
             padding: 0;
             display: flex;
+            justify-content: center;
             min-height: 100vh;
             color: #fff;
         }
 
         #greeting {
+            font-size: 2.2rem;
             font-weight: 700;
         }
     </style>

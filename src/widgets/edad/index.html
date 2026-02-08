@@ -5,8 +5,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edad</title>
-    <link rel="stylesheet" href="/src/styles/main.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap');
+
+        :root {
+            --font-family: 'Kalam', cursive, system-ui, sans-serif;
+            --primary-color: #ff6464;
+            --bg-color: #ffffff;
+            --text-color: #213547;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.5;
+            font-weight: 400;
+        }
+
+        /* Widget specific */
         body {
             background-color: transparent;
             /* Simple font to ensure width consistency mostly */
@@ -14,7 +37,6 @@
             padding: 0;
             color: #fff;
             display: flex;
-            align-items: center;
             justify-content: center;
             min-height: 100vh;
         }
