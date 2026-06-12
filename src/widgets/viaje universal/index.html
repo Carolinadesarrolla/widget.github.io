@@ -60,7 +60,7 @@
 
 <body>
     <div class="odometer-container" id="odometer-display">
-        Du bist heute bereits <span class="counter-value" id="distance-counter">0,0</span> km durch den Weltraum gereist.
+        All-Reise heute: <span class="counter-value" id="distance-counter">0,0</span> km
     </div>
 
     <script>
@@ -84,7 +84,7 @@
         }
 
         const counterElement = document.getElementById('distance-counter');
-        
+
         // Format options for German locale (de-DE)
         const formatOptions = {
             minimumFractionDigits: 1,
@@ -95,7 +95,7 @@
         function updateCounter() {
             const distance = getDistanceTraveledToday();
             const formatted = formatter.format(distance);
-            
+
             // Build HTML with fixed-width spans to prevent layout jitter
             let html = '';
             for (let i = 0; i < formatted.length; i++) {
