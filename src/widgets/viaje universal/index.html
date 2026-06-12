@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weltraum-Kilometerzähler</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap');
+
+        :root {
+            --font-family: 'Kalam', cursive, system-ui, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: transparent;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        .odometer-container {
+            font-size: 2.2rem;
+            font-weight: 700;
+            max-width: 90vw;
+            line-height: 1.4;
+        }
+
+        .counter-value {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .digit {
+            display: inline-block;
+            width: 0.55em;
+            text-align: center;
+        }
+
+        .separator {
+            display: inline-block;
+            width: 0.25em;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="odometer-container" id="odometer-display">
+        Du bist heute bereits <span class="counter-value" id="distance-counter">0,0</span> km durch den Weltraum gereist.
+    </div>
+
+    <script>
+        // Speed in km per millisecond:
+        // Earth around Sun: 30 km/s -> 0.030 km/ms
+        // Solar System through Galaxy: 220 km/s -> 0.220 km/ms
+        // Combined passive speed: 250 km/s -> 0.250 km/ms
+        const PASSIVE_SPEED_KM_MS = 0.250;
+
+        function getDistanceTraveledToday() {
+            const now = new Date();
+            // Midnight today in local timezone
+            const midnight = new Date(
+                now.getFullYear(),
+                now.getMonth(),
+                now.getDate(),
+                0, 0, 0, 0
+            );
+            const msElapsed = now.getTime() - midnight.getTime();
+            return msElapsed * PASSIVE_SPEED_KM_MS;
+        }
+
+        const counterElement = document.getElementById('distance-counter');
+        
+        // Format options for German locale (de-DE)
+        const formatOptions = {
+            minimumFractionDigits: 1,
+            maximumFractionDigits: 1
+        };
+        const formatter = new Intl.NumberFormat('de-DE', formatOptions);
+
+        function updateCounter() {
+            const distance = getDistanceTraveledToday();
+            const formatted = formatter.format(distance);
+            
+            // Build HTML with fixed-width spans to prevent layout jitter
+            let html = '';
+            for (let i = 0; i < formatted.length; i++) {
+                const char = formatted[i];
+                if (char >= '0' && char <= '9') {
+                    html += `<span class="digit">${char}</span>`;
+                } else if (char === '.' || char === ',') {
+                    html += `<span class="separator">${char}</span>`;
+                } else {
+                    html += char;
+                }
+            }
+
+            // Only update DOM if the structure/text actually changed
+            if (counterElement.innerHTML !== html) {
+                counterElement.innerHTML = html;
+            }
+
+            requestAnimationFrame(updateCounter);
+        }
+
+        // Initialize and start the update loop
+        updateCounter();
+    </script>
+</body>
+
+</html>
