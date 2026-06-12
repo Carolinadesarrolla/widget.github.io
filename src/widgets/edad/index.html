@@ -32,7 +32,6 @@
         /* Widget specific */
         body {
             background-color: transparent;
-            /* Simple font to ensure width consistency mostly */
             margin: 0;
             padding: 0;
             color: #fff;
@@ -45,8 +44,6 @@
         .age-container {
             position: relative;
             padding: 0.5rem 1rem;
-            /* No outer border as requested */
-            /* border: 2px solid rgba(0, 0, 0, 0.1); */
             background-clip: padding-box;
             display: flex;
             flex-direction: column;
@@ -56,16 +53,11 @@
         .progress-container {
             width: 100%;
             height: 8px;
-            /* Slightly thicker to show border */
             background-color: rgba(255, 255, 255);
-            /* Track background */
             border-radius: 999px;
-            /* Rounded pill shape */
             margin-top: 8px;
-            /* Space between text and bar */
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255);
-            /* Border for the bar itself */
             position: relative;
         }
 
@@ -73,23 +65,53 @@
             height: 100%;
             background: var(--primary-color, #646cff);
             width: 0%;
-            /* transition: width 0.1s linear; -> Removed transition for smoother realtime updates if frequent, 
-               but kept for smooth 1s updates. Since it's realtime, let's keep it direct or very fast. */
             border-radius: 999px;
         }
 
         .edad-text-wrapper {
-            /* Use tabular-nums to prevent jitter */
-            font-variant-numeric: tabular-nums;
-            /* Ensure fixed width tailored to the approximate size of the text */
-            min-width: 220px;
-            text-align: center;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
             font-weight: bold;
             font-size: 1.2rem;
+            min-width: 280px;
         }
 
-        .edad {
-            font-weight: bold;
+        #age-display {
+            display: inline-flex;
+            align-items: flex-end;
+        }
+
+        .digit-slot {
+            display: inline-block;
+            height: 1.5em;
+            overflow: hidden;
+            position: relative;
+            width: 0.65em;
+            vertical-align: bottom;
+        }
+
+        .digit-track {
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+        }
+
+        .digit-track span {
+            display: block;
+            height: 1.5em;
+            line-height: 1.5em;
+            text-align: center;
+        }
+
+        .char-slot {
+            display: inline-block;
+            height: 1.5em;
+            line-height: 1.5em;
+            vertical-align: bottom;
         }
 
         .percentage {
@@ -115,6 +137,79 @@
     <script>
         const birthDate = new Date('2007-01-12T00:00:00');
 
+        function updateAgeDisplay(formattedAge) {
+            const container = document.getElementById('age-display');
+            
+            // Check if container structure matches string length
+            if (container.children.length !== formattedAge.length) {
+                container.innerHTML = '';
+                for (let i = 0; i < formattedAge.length; i++) {
+                    const char = formattedAge[i];
+                    if (char >= '0' && char <= '9') {
+                        const slot = document.createElement('span');
+                        slot.className = 'digit-slot';
+                        
+                        const track = document.createElement('span');
+                        track.className = 'digit-track';
+                        track.dataset.currentDigit = '0';
+                        
+                        // Add digits 0-9 twice for smooth wrap-around
+                        for (let cycle = 0; cycle < 2; cycle++) {
+                            for (let d = 0; d <= 9; d++) {
+                                const digitSpan = document.createElement('span');
+                                digitSpan.textContent = d;
+                                track.appendChild(digitSpan);
+                            }
+                        }
+                        
+                        slot.appendChild(track);
+                        container.appendChild(slot);
+                    } else {
+                        const charSpan = document.createElement('span');
+                        charSpan.className = 'char-slot';
+                        charSpan.textContent = char;
+                        container.appendChild(charSpan);
+                    }
+                }
+            }
+            
+            // Update track positions with slide-up transitions
+            for (let i = 0; i < formattedAge.length; i++) {
+                const char = formattedAge[i];
+                const slot = container.children[i];
+                
+                if (char >= '0' && char <= '9') {
+                    const track = slot.querySelector('.digit-track');
+                    const targetDigit = parseInt(char, 10);
+                    const currentDigit = parseInt(track.dataset.currentDigit || '0', 10);
+                    
+                    if (currentDigit !== targetDigit) {
+                        if (targetDigit < currentDigit) {
+                            // Slide to target in second cycle
+                            track.style.transition = 'transform 0.25s cubic-bezier(0.25, 1, 0.5, 1)';
+                            track.style.transform = `translateY(-${((10 + targetDigit) * 100) / 20}%)`;
+                            track.dataset.currentDigit = targetDigit.toString();
+                            
+                            // Snap back to index targetDigit in first cycle instantly after transition
+                            setTimeout(() => {
+                                track.style.transition = 'none';
+                                track.style.transform = `translateY(-${(targetDigit * 100) / 20}%)`;
+                            }, 250);
+                        } else {
+                            // Normal slide
+                            track.style.transition = 'transform 0.25s cubic-bezier(0.25, 1, 0.5, 1)';
+                            track.style.transform = `translateY(-${(targetDigit * 100) / 20}%)`;
+                            track.dataset.currentDigit = targetDigit.toString();
+                        }
+                    }
+                } else {
+                    if (slot.textContent !== char) {
+                        slot.textContent = char;
+                    }
+                }
+            }
+        }
+
         function updateAge() {
             const now = new Date();
 
@@ -122,7 +217,6 @@
             let years = now.getFullYear() - birthDate.getFullYear();
 
             // Create date object for the birthday in the current year
-            // Note: We use the same month/day as birthDate
             let lastBirthday = new Date(birthDate);
             lastBirthday.setFullYear(now.getFullYear());
 
@@ -146,7 +240,8 @@
             // Format to 7 decimal places with comma
             let formattedAge = exactAge.toFixed(7).replace('.', ',');
 
-            document.getElementById('age-display').innerText = formattedAge;
+            // Update sliding age display
+            updateAgeDisplay(formattedAge);
 
             // Update progress bar and percentage text
             const percentage = fraction * 100;
