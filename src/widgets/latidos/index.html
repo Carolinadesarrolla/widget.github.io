@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Herzschläge-Zähler</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap');
+
+        :root {
+            --font-family: 'Kalam', cursive, system-ui, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: transparent;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .heartbeat-container {
+            font-size: 2.2rem;
+            font-weight: 700;
+            max-width: 90vw;
+            line-height: 1.4;
+            display: inline-block;
+            transition: transform 0.1s ease-out;
+            will-change: transform;
+        }
+
+        .counter-value {
+            font-variant-numeric: tabular-nums;
+            color: #ff6464;
+        }
+
+        @keyframes heartbeat {
+            0% {
+                transform: scale(1);
+            }
+            14% {
+                transform: scale(1.08);
+                text-shadow: 0 0 12px rgba(255, 100, 100, 0.6);
+            }
+            28% {
+                transform: scale(1.02);
+            }
+            42% {
+                transform: scale(1.15);
+                text-shadow: 0 0 18px rgba(255, 100, 100, 0.9);
+            }
+            70% {
+                transform: scale(1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .pulse {
+            animation: heartbeat 0.5s ease-out forwards;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="heartbeat-container" id="heartbeat-display">
+        <span class="counter-value" id="heartbeat-counter">0</span> Herzschläge
+    </div>
+
+    <script>
+        // Parameters
+        const birthDate = new Date('2007-01-12T00:00:00');
+        const BEATS_PER_MINUTE = 72; // Standard average (70-75 bpm)
+        const BEATS_PER_SECOND = BEATS_PER_MINUTE / 60; // 1.2 beats/sec
+        const BEAT_INTERVAL_MS = (60 / BEATS_PER_MINUTE) * 1000; // 833.33ms
+
+        const counterElement = document.getElementById('heartbeat-counter');
+        const displayElement = document.getElementById('heartbeat-display');
+
+        function updateCounter() {
+            const now = new Date();
+            const secondsSinceBirth = (now.getTime() - birthDate.getTime()) / 1000;
+            const totalBeats = Math.floor(secondsSinceBirth * BEATS_PER_SECOND);
+
+            // Format number using German locale (thousands: dot, decimals: comma)
+            counterElement.textContent = totalBeats.toLocaleString('de-DE');
+
+            // Trigger visual pulse animation (synchronized with the heartbeat tick)
+            displayElement.classList.remove('pulse');
+            void displayElement.offsetWidth; // Force reflow
+            displayElement.classList.add('pulse');
+        }
+
+        // Initialize immediately
+        updateCounter();
+
+        // Tick on the exact heartbeat interval
+        setInterval(updateCounter, BEAT_INTERVAL_MS);
+    </script>
+</body>
+
+</html>

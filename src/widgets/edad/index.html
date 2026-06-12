@@ -126,7 +126,7 @@
 <body>
     <div class="age-container">
         <div class="edad-text-wrapper">
-            <span class="edad" id="age-display"></span><span class="edad">&nbsp;años</span>
+            <span class="edad" id="age-display"></span><span class="edad">&nbsp;Jahre</span>
         </div>
         <div class="percentage" id="percentage-display"></div>
         <div class="progress-container">
@@ -139,7 +139,7 @@
 
         function updateAgeDisplay(formattedAge) {
             const container = document.getElementById('age-display');
-            
+
             // Check if container structure matches string length
             if (container.children.length !== formattedAge.length) {
                 container.innerHTML = '';
@@ -148,11 +148,11 @@
                     if (char >= '0' && char <= '9') {
                         const slot = document.createElement('span');
                         slot.className = 'digit-slot';
-                        
+
                         const track = document.createElement('span');
                         track.className = 'digit-track';
                         track.dataset.currentDigit = '0';
-                        
+
                         // Add digits 0-9 twice for smooth wrap-around
                         for (let cycle = 0; cycle < 2; cycle++) {
                             for (let d = 0; d <= 9; d++) {
@@ -161,7 +161,7 @@
                                 track.appendChild(digitSpan);
                             }
                         }
-                        
+
                         slot.appendChild(track);
                         container.appendChild(slot);
                     } else {
@@ -172,24 +172,24 @@
                     }
                 }
             }
-            
+
             // Update track positions with slide-up transitions
             for (let i = 0; i < formattedAge.length; i++) {
                 const char = formattedAge[i];
                 const slot = container.children[i];
-                
+
                 if (char >= '0' && char <= '9') {
                     const track = slot.querySelector('.digit-track');
                     const targetDigit = parseInt(char, 10);
                     const currentDigit = parseInt(track.dataset.currentDigit || '0', 10);
-                    
+
                     if (currentDigit !== targetDigit) {
                         if (targetDigit < currentDigit) {
                             // Slide to target in second cycle
                             track.style.transition = 'transform 0.25s cubic-bezier(0.25, 1, 0.5, 1)';
                             track.style.transform = `translateY(-${((10 + targetDigit) * 100) / 20}%)`;
                             track.dataset.currentDigit = targetDigit.toString();
-                            
+
                             // Snap back to index targetDigit in first cycle instantly after transition
                             setTimeout(() => {
                                 track.style.transition = 'none';
